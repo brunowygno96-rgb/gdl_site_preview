@@ -2,43 +2,24 @@
   'use strict';
 
   // ---------- Project data ----------
-  // Projects without a real photo yet fall back to a gradient placeholder.
-  const gradients = [
-    'linear-gradient(135deg,#3a3a3a,#0d0d0d)',
-    'linear-gradient(135deg,#5b4636,#1a1410)',
-    'linear-gradient(135deg,#37474f,#0e1316)',
-    'linear-gradient(135deg,#4a3f35,#12100d)',
-    'linear-gradient(135deg,#2e2e38,#0a0a0e)',
-    'linear-gradient(135deg,#5c3d2e,#150e0a)',
-    'linear-gradient(135deg,#3d3d3d,#111111)',
-    'linear-gradient(135deg,#463f5e,#100e18)',
-    'linear-gradient(135deg,#4d4238,#131009)',
-    'linear-gradient(135deg,#33403a,#0b0f0d)',
-    'linear-gradient(135deg,#4b3b47,#120e11)',
-    'linear-gradient(135deg,#3f4a4d,#0d1112)',
-    'linear-gradient(135deg,#39463f,#0c1210)',
-    'linear-gradient(135deg,#4a3e2e,#120e08)',
-    'linear-gradient(135deg,#3a3f4d,#0d0f14)',
-    'linear-gradient(135deg,#443535,#100c0c)',
-  ];
-
+  const CARDS = 'assets/cards/';
   const projects = [
-    { client: 'Kim Minjae',                  year: 2026, title: 'Digital Content' },
-    { client: 'Resulta Digital',              year: 2026, title: 'Ventures' },
-    { client: 'N Jackson x Spyders',          year: 2025, title: 'Digital Content' },
-    { client: 'Bwing',                        year: 2024, title: 'Ventures' },
-    { client: 'Tamires Dias',                 year: 2023, title: 'Social Media' },
-    { client: 'Ruben Vargas',                 year: 2022, title: 'Social Media' },
-    { client: 'Corinthians x Tamires Dias',   year: 2022, title: 'Brand Partnerships' },
-    { client: 'Séan Garnier',                 year: 2021, title: 'Growth Projects' },
-    { client: 'Joe Hart',                     year: 2021, title: 'Social Media', image: 'assets/Joe Hart.png' },
-    { client: 'CBF',                          year: 2021, title: 'Digital Content' },
-    { client: 'Ronaldo x Octagon',            year: 2021, title: 'Growth Projects', image: 'assets/Ronaldo x Octagon.png' },
-    { client: 'Ricardo Quaresma',             year: 2020, title: 'Digital Content', image: 'assets/Ricardo Quaresma.png' },
-    { client: 'Lichtsteiner',                 year: 2020, title: 'Digital Content' },
-    { client: 'Umbro x Futsal',               year: 2019, title: 'Brand Partnerships' },
-    { client: 'Falcão',                       year: 2018, title: 'Digital Content' },
-    { client: 'Adidas x Freestyle Football',  year: 2018, title: 'Brand Partnerships' },
+    { client: 'Kim Minjae',                  title: 'Digital Content',       image: CARDS + '0001 - Kim Minjae.webp' },
+    { client: 'Resulta Digital',              title: 'Ventures',              image: CARDS + '0002 - Resulta Digital.webp' },
+    { client: 'N Jackson x Spyders',          title: 'Digital Content',       image: CARDS + '0003 - Nicolas Jackson.webp' },
+    { client: 'Bwing',                        title: 'Ventures',              image: CARDS + '0004 - Bwing.png' },
+    { client: 'Tamires Dias',                 title: 'Social Media',          image: CARDS + '0005 - Tamires Dias.webp' },
+    { client: 'Ruben Vargas',                 title: 'Social Media',          image: CARDS + '0006 - Ruben Vargas.webp' },
+    { client: 'Corinthians x Tamires Dias',   title: 'Brand Partnerships',    image: CARDS + '0007 - Corinthians.webp' },
+    { client: 'Séan Garnier',                 title: 'Growth Projects',       image: CARDS + '0008 - Séan Garnier.webp' },
+    { client: 'Joe Hart',                     title: 'Social Media',          image: CARDS + '0009 - Joe Hart.webp' },
+    { client: 'CBF',                          title: 'Digital Content',       image: CARDS + '0010 - CBF.webp' },
+    { client: 'Ronaldo x Octagon',            title: 'Growth Projects',       image: CARDS + '0011 - Ronaldo.webp' },
+    { client: 'Ricardo Quaresma',             title: 'Digital Content',       image: CARDS + '0012 - Ricardo Quaresma.webp' },
+    { client: 'Lichtsteiner',                 title: 'Digital Content',       image: CARDS + '0013 - Stephan Lichtsteiner.webp' },
+    { client: 'Umbro x Futsal',               title: 'Brand Partnerships',    image: CARDS + '0014 - Umbro.webp' },
+    { client: 'Falcão',                       title: 'Digital Content',       image: CARDS + '0015 - Falcão.webp' },
+    { client: 'Adidas x Freestyle Football',  title: 'Brand Partnerships',    image: CARDS + '0016 - Adidas.webp' },
   ];
 
   const track = document.getElementById('galleryTrack');
@@ -51,18 +32,16 @@
   // counter-scaled against the card's own non-uniform scale — the outer
   // card shrinks (cropping the visible window tighter), while the photo
   // itself always renders at its true, undistorted proportions.
-  const buildCard = (p, i) => {
+  const buildCard = (p) => {
     const card = document.createElement('div');
     card.className = 'project-card' + (p.soon ? ' soon' : '');
     const thumbStyle = p.image
       ? `background-image:url('${p.image}');background-size:cover;background-position:center;`
-      : `background:${gradients[i % gradients.length]};`;
+      : `background:#141414;`;
     card.innerHTML = `
-      <div class="project-number">${String(i + 1).padStart(4, '0')}</div>
       <div class="project-thumb"><div class="project-thumb-img" style="${thumbStyle}"></div></div>
       <div class="project-info">
         <span class="project-client">${p.client}</span>
-        <span class="project-year">${p.year}</span>
       </div>
       <div class="project-title">${p.title}</div>
     `;
@@ -71,7 +50,7 @@
 
   const SETS = 3;
   for (let s = 0; s < SETS; s++) {
-    projects.forEach((p, i) => track.appendChild(buildCard(p, i)));
+    projects.forEach((p) => track.appendChild(buildCard(p)));
   }
 
   const cardEls = Array.from(track.children);
