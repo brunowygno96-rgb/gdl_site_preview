@@ -350,6 +350,26 @@ body.about-page {
   max-width: 560px;
 }
 
+/* Full-bleed image slot — breaks out of .about-main's centered max-width
+   to span the full viewport, the same way redot.fr/about's showcase image
+   does. Point background-image at a real photo when one is ready; until
+   then it renders as a plain dark panel. */
+.about-image {
+  width: 100vw;
+  position: relative;
+  left: 50%;
+  right: 50%;
+  margin-left: -50vw;
+  margin-right: -50vw;
+  margin-top: 110px;
+  height: 60vh;
+  min-height: 340px;
+  max-height: 640px;
+  background-color: #141414;
+  background-size: cover;
+  background-position: center;
+}
+
 .about-statement {
   margin: 130px 0;
   padding: 70px 0;

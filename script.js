@@ -7,7 +7,7 @@
     { client: 'Kim Minjae',                  title: 'Digital Content',       image: CARDS + '0001 - Kim Minjae.webp' },
     { client: 'Resulta Digital',              title: 'Ventures',              image: CARDS + '0002 - Resulta Digital.webp' },
     { client: 'N Jackson x Spyders',          title: 'Digital Content',       image: CARDS + '0003 - Nicolas Jackson.webp' },
-    { client: 'Bwing',                        title: 'Ventures',              image: CARDS + '0004 - Bwing.png' },
+    { client: 'Bwing',                        title: 'Ventures',              image: CARDS + '0004 - Bwing.webp' },
     { client: 'Tamires Dias',                 title: 'Social Media',          image: CARDS + '0005 - Tamires Dias.webp' },
     { client: 'Ruben Vargas',                 title: 'Social Media',          image: CARDS + '0006 - Ruben Vargas.webp' },
     { client: 'Corinthians x Tamires Dias',   title: 'Brand Partnerships',    image: CARDS + '0007 - Corinthians.webp' },
