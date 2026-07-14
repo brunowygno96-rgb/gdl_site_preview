@@ -54,9 +54,26 @@ body.about-page {
   inset: 0;
   z-index: 999;
   background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transform: translateY(0);
   pointer-events: auto;
   transition: transform 0.55s var(--ease);
+}
+
+.page-transition-logo {
+  width: 220px;
+  height: auto;
+  opacity: 0;
+  transition: opacity 0.3s var(--ease);
+}
+
+/* Only shown for the initial loading-screen moment (see transition.js) —
+   not while covering the screen on the way to another page, which stays
+   a plain white bar. */
+.page-transition.is-loading .page-transition-logo {
+  opacity: 1;
 }
 
 .page-transition.is-above {

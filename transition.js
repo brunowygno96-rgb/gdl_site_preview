@@ -5,15 +5,19 @@
   if (!overlay) return;
 
   const DURATION = 550;
+  const LOGO_HOLD = 900;   // how long the loading screen holds with the logo showing
+  const LOGO_FADE = 250;   // let the logo fade out before the bar itself starts rising
 
-  // Reveal the page shortly after load: rise up and exit off the top.
-  // The double rAF makes sure the browser has painted the overlay in its
-  // covering state at least once before "is-above" is added, so this
-  // actually animates instead of the class landing before first paint
-  // and skipping the transition.
-  requestAnimationFrame(() => {
-    requestAnimationFrame(() => overlay.classList.add('is-above'));
-  });
+  // Initial load only: show the loading screen (logo on the white bar),
+  // hold it for a beat, fade the logo out, then rise up and exit off the
+  // top to reveal the page. Internal navigation (the click handler below)
+  // skips the logo entirely — it's just the plain white bar covering and
+  // uncovering.
+  overlay.classList.add('is-loading');
+  setTimeout(() => {
+    overlay.classList.remove('is-loading');
+    setTimeout(() => overlay.classList.add('is-above'), LOGO_FADE);
+  }, LOGO_HOLD);
 
   document.querySelectorAll('a[href]').forEach((link) => {
     const url = link.getAttribute('href');
