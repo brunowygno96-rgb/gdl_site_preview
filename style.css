@@ -42,23 +42,35 @@ body.about-page {
   cursor: auto;
 }
 
-/* Universal page transition: covers the screen on load and fades away to
-   reveal the page, then fades back in and navigates whenever an internal
-   link is clicked — see transition.js. Solid, not the grain/blend layers,
-   so it fully hides whatever the destination page is doing underneath. */
+/* Universal page transition: a solid white bar. Default state covers the
+   screen (so there's no flash of the page before this loads); rises up
+   and exits off the top to reveal the page on load; and on the way to
+   another page, jumps below the viewport (instantly, no transition) then
+   rises back up to cover the screen before navigating — see
+   transition.js. Same upward motion both times, so it reads as one
+   continuous sweep across the two page loads. */
 .page-transition {
   position: fixed;
   inset: 0;
   z-index: 999;
-  background: var(--bg);
-  opacity: 1;
+  background: #ffffff;
+  transform: translateY(0);
   pointer-events: auto;
-  transition: opacity 0.5s var(--ease);
+  transition: transform 0.55s var(--ease);
 }
 
-.page-transition.is-hidden {
-  opacity: 0;
+.page-transition.is-above {
+  transform: translateY(-100%);
   pointer-events: none;
+}
+
+.page-transition.is-below {
+  transform: translateY(100%);
+  pointer-events: none;
+}
+
+.page-transition.no-transition {
+  transition: none;
 }
 
 /* subtle film grain overlay for texture */
