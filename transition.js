@@ -8,16 +8,29 @@
   const LOGO_HOLD = 900;   // how long the loading screen holds with the logo showing
   const LOGO_FADE = 250;   // let the logo fade out before the bar itself starts rising
 
-  // Initial load only: show the loading screen (logo on the white bar),
-  // hold it for a beat, fade the logo out, then rise up and exit off the
-  // top to reveal the page. Internal navigation (the click handler below)
-  // skips the logo entirely — it's just the plain white bar covering and
-  // uncovering.
-  overlay.classList.add('is-loading');
-  setTimeout(() => {
-    overlay.classList.remove('is-loading');
-    setTimeout(() => overlay.classList.add('is-above'), LOGO_FADE);
-  }, LOGO_HOLD);
+  // Fires the moment the bar actually starts rising to reveal the page —
+  // script.js listens for this so the gallery's own cascade intro doesn't
+  // start (and finish) while it's still hidden behind the bar.
+  const reveal = () => {
+    overlay.classList.add('is-above');
+    window.dispatchEvent(new Event('gdl:reveal'));
+  };
+
+  // The logo loading screen is a first-impression thing — show it once
+  // per browser session (sessionStorage), not on every internal page
+  // load. Without this, clicking About after already seeing the intro on
+  // the home page would show the whole loading screen again.
+  const introAlreadyShown = sessionStorage.getItem('gdl-intro-shown');
+  if (!introAlreadyShown) {
+    sessionStorage.setItem('gdl-intro-shown', '1');
+    overlay.classList.add('is-loading');
+    setTimeout(() => {
+      overlay.classList.remove('is-loading');
+      setTimeout(reveal, LOGO_FADE);
+    }, LOGO_HOLD);
+  } else {
+    requestAnimationFrame(() => requestAnimationFrame(reveal));
+  }
 
   document.querySelectorAll('a[href]').forEach((link) => {
     const url = link.getAttribute('href');

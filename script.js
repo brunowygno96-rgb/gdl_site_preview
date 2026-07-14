@@ -76,6 +76,16 @@
   let introStart = null;
   let introDone = false;
 
+  // Cards stay parked off-screen (frozen, not falling) until the page
+  // transition overlay (transition.js) actually starts rising to reveal
+  // the page — otherwise the cascade played out while still hidden behind
+  // the white loading bar, so by the time it lifted the cards had already
+  // finished falling. The timeout is just a safety net in case that event
+  // never arrives for some reason (e.g. transition.js failed to load).
+  let introTriggered = false;
+  window.addEventListener('gdl:reveal', () => { introTriggered = true; }, { once: true });
+  setTimeout(() => { introTriggered = true; }, 3000);
+
   const easeOutBack = (t) => {
     const c1 = 1.70158;
     const c3 = c1 + 1;
@@ -202,8 +212,8 @@
     }
     lastFrameTime = timestamp;
 
-    if (introStart === null) introStart = timestamp;
-    const introElapsed = timestamp - introStart;
+    if (introTriggered && introStart === null) introStart = timestamp;
+    const introElapsed = introStart === null ? 0 : timestamp - introStart;
     if (introElapsed >= INTRO_TOTAL && !introDone) {
       introDone = true;
       for (const card of cardEls) card.style.opacity = '';
