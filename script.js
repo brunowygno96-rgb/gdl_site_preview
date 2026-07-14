@@ -226,6 +226,17 @@
     // collapse back into thin slivers. Same per-card curve as before,
     // unchanged — computed into arrays first so a corrective pass can run
     // afterward (see below) without touching this formula at all.
+    //
+    // Distance is computed analytically from each card's static layout
+    // position (baseCenter, cached once) plus the current scroll offset —
+    // never from the card's own last-rendered transform via
+    // getBoundingClientRect(). Reading the rendered position would feed
+    // last frame's push/scale back into this frame's distance calculation,
+    // creating a feedback loop between "how pushed a card is" and "how far
+    // it measures from center" that could destabilize right around
+    // whichever transition happened to be least forgiving numerically —
+    // which is what was showing up as a localized stutter at one specific
+    // pair of cards.
     const centerX = window.innerWidth / 2;
     const n = cardEls.length;
     const t = new Array(n);
@@ -234,10 +245,7 @@
     const push = new Array(n);
 
     for (let i = 0; i < n; i++) {
-      const card = cardEls[i];
-      const rect = card.getBoundingClientRect();
-      const cardCenter = rect.left + rect.width / 2;
-      const dist = cardCenter - centerX;
+      const dist = (baseCenter[i] - pos) - centerX;
       t[i] = Math.max(0, 1 - Math.abs(dist) / FOCUS_RADIUS);
       const dir = dist >= 0 ? 1 : -1;
       push[i] = dir * (1 - t[i]) * PUSH_AMOUNT;
