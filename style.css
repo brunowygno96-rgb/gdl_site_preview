@@ -63,8 +63,8 @@ body.about-page {
 }
 
 .page-transition-logo {
-  width: 220px;
-  height: auto;
+  height: 130px;
+  width: auto;
   opacity: 0;
   transition: opacity 0.3s var(--ease);
 }
@@ -116,19 +116,9 @@ body.about-page {
 }
 
 .logo img {
-  height: 20px;
+  height: 34px;
   width: auto;
   display: block;
-}
-
-.tagline {
-  flex: 1;
-  max-width: 360px;
-  text-align: center;
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--fg-dim);
-  letter-spacing: 0.01em;
 }
 
 .site-nav {
@@ -331,7 +321,6 @@ body.about-page {
 
 /* ---------- Responsive ---------- */
 @media (max-width: 720px) {
-  .tagline { display: none; }
   .site-header { padding: 20px; }
   .site-footer { padding: 18px 20px; flex-direction: column; gap: 8px; align-items: flex-start; }
   .project-card { width: 312px; margin-left: -210px; }
@@ -346,7 +335,7 @@ body.about-page {
 
 /* ---------- About page ---------- */
 .about-main {
-  max-width: 860px;
+  max-width: 1100px;
   margin: 0 auto;
   padding: 160px 40px 140px;
 }
@@ -357,103 +346,42 @@ body.about-page {
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: var(--fg-dim);
-  margin-bottom: 28px;
+  margin-bottom: 48px;
 }
 
-.about-intro {
-  font-size: clamp(26px, 4vw, 42px);
-  font-weight: 600;
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  max-width: 780px;
-}
-
-.about-services {
-  margin-top: 120px;
-}
-
-.about-service {
+.about-columns {
   display: grid;
-  grid-template-columns: 160px 1fr;
-  gap: 40px;
-  padding: 36px 0;
-  border-top: 1px solid var(--border);
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
 }
 
-.about-service:last-child {
-  border-bottom: 1px solid var(--border);
+.about-copy {
+  text-align: left;
 }
 
-.about-service-title {
-  font-size: 13px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  font-weight: 600;
-}
-
-.about-service-text {
+.about-copy p {
   font-size: 16px;
   line-height: 1.6;
   color: var(--fg-dim);
   max-width: 560px;
 }
 
-/* Full-bleed image slot — breaks out of .about-main's centered max-width
-   to span the full viewport, the same way redot.fr/about's showcase image
-   does. Point background-image at a real photo when one is ready; until
-   then it renders as a plain dark panel. */
-.about-image {
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  margin-top: 110px;
-  height: 60vh;
-  min-height: 340px;
-  max-height: 640px;
+.about-copy p + p {
+  margin-top: 24px;
+}
+
+/* 4:3 image slot — point background-image at a real photo when one is
+   ready; until then it renders as a plain dark panel. */
+.about-image-box {
+  width: 100%;
+  aspect-ratio: 4 / 3;
   background-color: #141414;
   background-size: cover;
   background-position: center;
 }
 
-.about-statement {
-  margin: 130px 0;
-  padding: 70px 0;
-  border-top: 1px solid var(--border);
-  border-bottom: 1px solid var(--border);
-  font-size: clamp(22px, 3vw, 32px);
-  line-height: 1.4;
-  font-style: italic;
-}
-
-.about-location {
-  font-size: 16px;
-  line-height: 1.7;
-  color: var(--fg-dim);
-  max-width: 640px;
-}
-
-.about-cta {
-  margin-top: 90px;
-}
-
-.about-cta a {
-  display: inline-block;
-  font-size: 15px;
-  border-bottom: 1px solid var(--fg);
-  padding-bottom: 4px;
-  transition: opacity 0.3s var(--ease);
-}
-
-.about-cta a:hover {
-  opacity: 0.7;
-}
-
 @media (max-width: 720px) {
   .about-main { padding: 130px 20px 120px; }
-  .about-service { grid-template-columns: 1fr; gap: 12px; }
-  .about-services { margin-top: 80px; }
-  .about-statement { margin: 90px 0; padding: 50px 0; }
+  .about-columns { grid-template-columns: 1fr; gap: 40px; }
 }
