@@ -62,17 +62,17 @@
   const wasActive = new Array(cardEls.length).fill(true);
 
   // ---------- Intro animation ----------
-  // Cards start scattered (offset, rotated, faded) and settle into their
-  // real filmstrip position over INTRO_DURATION, with a slight overshoot
-  // so they feel like they snap into place rather than just arriving.
-  // Input is ignored until it finishes so a wheel flick or drag can't
-  // collide with the settle.
-  const INTRO_DURATION = 1500;
-  const introOffsets = cardEls.map(() => ({
-    x: (Math.random() * 2 - 1) * 420,
-    y: (Math.random() * 2 - 1) * 70,
-    rot: (Math.random() * 2 - 1) * 16,
-  }));
+  // Cards fall from above and land into their real filmstrip position like
+  // a cascade — staggered left to right (by position within one set, so
+  // all 3 repeated sets fall in the same wave), each with a slight
+  // overshoot bounce on landing. Input is ignored until every card has
+  // landed so a wheel flick or drag can't collide with the settle.
+  const CASCADE_STEP = 40;   // ms of extra delay per card, left to right
+  const FALL_DURATION = 850; // ms each individual card takes to fall
+  const FALL_HEIGHT = window.innerHeight * 0.9 + 300; // start well above the viewport
+  const introDelays = cardEls.map((_, i) => (i % projects.length) * CASCADE_STEP);
+  const introRotations = cardEls.map(() => (Math.random() * 2 - 1) * 6);
+  const INTRO_TOTAL = Math.max(...introDelays) + FALL_DURATION;
   let introStart = null;
   let introDone = false;
 
@@ -203,9 +203,8 @@
     lastFrameTime = timestamp;
 
     if (introStart === null) introStart = timestamp;
-    const introRawT = Math.min(1, (timestamp - introStart) / INTRO_DURATION);
-    const introMix = 1 - easeOutBack(introRawT); // 1 = fully scattered, 0 = settled
-    if (introRawT >= 1 && !introDone) {
+    const introElapsed = timestamp - introStart;
+    if (introElapsed >= INTRO_TOTAL && !introDone) {
       introDone = true;
       for (const card of cardEls) card.style.opacity = '';
     }
@@ -305,14 +304,17 @@
       // Position must update every frame for every card, even fully-receded
       // ones — they're still sliding past on-screen with the rest of the
       // deck, just not in focus. This part is cheap (compositor-only).
-      // introMix folds in the scattered starting offset — it's 0 once the
-      // intro settles, so this collapses back to the plain resting
-      // transform with no extra cost or branching.
-      const io = introOffsets[i];
-      const ix = push[i] + io.x * introMix;
-      const iy = io.y * introMix;
-      const irot = io.rot * introMix;
-      card.style.transform = `translate3d(${ix}px, ${iy}px, 0) rotate(${irot}deg) scale(${scaleX[i]}, ${scaleY[i]})`;
+      // introMix folds in the falling-cascade offset — it's 0 once a card
+      // has landed, so this collapses back to the plain resting transform
+      // with no extra cost or branching.
+      let introMix = 0;
+      if (!introDone) {
+        const localT = Math.max(0, Math.min(1, (introElapsed - introDelays[i]) / FALL_DURATION));
+        introMix = 1 - easeOutBack(localT);
+      }
+      const iy = -FALL_HEIGHT * introMix;
+      const irot = introRotations[i] * introMix;
+      card.style.transform = `translate3d(${push[i]}px, ${iy}px, 0) rotate(${irot}deg) scale(${scaleX[i]}, ${scaleY[i]})`;
       if (!introDone) card.style.opacity = String(1 - introMix * 0.85);
 
       // Everything below (grayscale filter, z-index, the photo's own

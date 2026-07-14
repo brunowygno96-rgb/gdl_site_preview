@@ -42,6 +42,25 @@ body.about-page {
   cursor: auto;
 }
 
+/* Universal page transition: covers the screen on load and fades away to
+   reveal the page, then fades back in and navigates whenever an internal
+   link is clicked — see transition.js. Solid, not the grain/blend layers,
+   so it fully hides whatever the destination page is doing underneath. */
+.page-transition {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--bg);
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.5s var(--ease);
+}
+
+.page-transition.is-hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
 /* subtle film grain overlay for texture */
 .grain {
   position: fixed;
