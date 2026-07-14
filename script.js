@@ -61,6 +61,27 @@
   // reapplying the same values 60 times a second.
   const wasActive = new Array(cardEls.length).fill(true);
 
+  // ---------- Intro animation ----------
+  // Cards start scattered (offset, rotated, faded) and settle into their
+  // real filmstrip position over INTRO_DURATION, with a slight overshoot
+  // so they feel like they snap into place rather than just arriving.
+  // Input is ignored until it finishes so a wheel flick or drag can't
+  // collide with the settle.
+  const INTRO_DURATION = 1500;
+  const introOffsets = cardEls.map(() => ({
+    x: (Math.random() * 2 - 1) * 420,
+    y: (Math.random() * 2 - 1) * 70,
+    rot: (Math.random() * 2 - 1) * 16,
+  }));
+  let introStart = null;
+  let introDone = false;
+
+  const easeOutBack = (t) => {
+    const c1 = 1.70158;
+    const c3 = c1 + 1;
+    return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2);
+  };
+
   // ---------- Infinite bidirectional smooth scroll ----------
   let current = 0;
   let target = 0;
@@ -181,6 +202,14 @@
     }
     lastFrameTime = timestamp;
 
+    if (introStart === null) introStart = timestamp;
+    const introRawT = Math.min(1, (timestamp - introStart) / INTRO_DURATION);
+    const introMix = 1 - easeOutBack(introRawT); // 1 = fully scattered, 0 = settled
+    if (introRawT >= 1 && !introDone) {
+      introDone = true;
+      for (const card of cardEls) card.style.opacity = '';
+    }
+
     current += (target - current) * (1 - Math.pow(1 - 0.085, dt));
     if (!isDragging) {
       current += velocity * dt;
@@ -276,7 +305,15 @@
       // Position must update every frame for every card, even fully-receded
       // ones — they're still sliding past on-screen with the rest of the
       // deck, just not in focus. This part is cheap (compositor-only).
-      card.style.transform = `translate3d(${push[i]}px, 0, 0) scale(${scaleX[i]}, ${scaleY[i]})`;
+      // introMix folds in the scattered starting offset — it's 0 once the
+      // intro settles, so this collapses back to the plain resting
+      // transform with no extra cost or branching.
+      const io = introOffsets[i];
+      const ix = push[i] + io.x * introMix;
+      const iy = io.y * introMix;
+      const irot = io.rot * introMix;
+      card.style.transform = `translate3d(${ix}px, ${iy}px, 0) rotate(${irot}deg) scale(${scaleX[i]}, ${scaleY[i]})`;
+      if (!introDone) card.style.opacity = String(1 - introMix * 0.85);
 
       // Everything below (grayscale filter, z-index, the photo's own
       // counter-scale) is constant once a card is fully receded — only the
@@ -308,6 +345,7 @@
   // ---------- Wheel ----------
   viewport.addEventListener('wheel', (e) => {
     e.preventDefault();
+    if (!introDone) return; // don't let a scroll collide with the settle animation
     hideHint();
     const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY) ? e.deltaX : e.deltaY;
     target += delta * 1.15;
@@ -319,6 +357,7 @@
 
   // ---------- Drag (mouse) ----------
   const dragStart = (clientX) => {
+    if (!introDone) return; // don't let a drag collide with the settle animation
     isDragging = true;
     velocity = 0;
     usingWheel = false;
@@ -356,6 +395,7 @@
 
   // ---------- Keyboard ----------
   window.addEventListener('keydown', (e) => {
+    if (!introDone) return; // don't let a nudge collide with the settle animation
     if (e.key === 'ArrowRight') { target += PITCH; hideHint(); }
     if (e.key === 'ArrowLeft') { target -= PITCH; hideHint(); }
   });
