@@ -6,20 +6,20 @@
   const projects = [
     { client: 'Kim Minjae',                  title: 'Digital Content',       image: CARDS + '0001 - Kim Minjae.webp' },
     { client: 'Resulta Digital',              title: 'Ventures',              image: CARDS + '0002 - Resulta Digital.webp' },
-    { client: 'N Jackson x Spyders',          title: 'Digital Content',       image: CARDS + '0003 - Nicolas Jackson.webp' },
+    { client: 'Nicolas Jackson x Spyders',    title: 'Digital Content',       image: CARDS + '0003 - Nicolas Jackson.webp' },
     { client: 'Bwing',                        title: 'Ventures',              image: CARDS + '0004 - Bwing.webp' },
     { client: 'Tamires Dias',                 title: 'Social Media',          image: CARDS + '0005 - Tamires Dias.webp' },
     { client: 'Ruben Vargas',                 title: 'Social Media',          image: CARDS + '0006 - Ruben Vargas.webp' },
-    { client: 'Corinthians x Tamires Dias',   title: 'Brand Partnerships',    image: CARDS + '0007 - Corinthians.webp' },
+    { client: 'Corinthians',                  title: 'Brand Partnerships',    image: CARDS + '0007 - Corinthians.webp' },
     { client: 'Séan Garnier',                 title: 'Growth Projects',       image: CARDS + '0008 - Séan Garnier.webp' },
     { client: 'Joe Hart',                     title: 'Social Media',          image: CARDS + '0009 - Joe Hart.webp' },
     { client: 'CBF',                          title: 'Digital Content',       image: CARDS + '0010 - CBF.webp' },
     { client: 'Ronaldo x Octagon',            title: 'Growth Projects',       image: CARDS + '0011 - Ronaldo.webp' },
     { client: 'Ricardo Quaresma',             title: 'Digital Content',       image: CARDS + '0012 - Ricardo Quaresma.webp' },
-    { client: 'Lichtsteiner',                 title: 'Digital Content',       image: CARDS + '0013 - Stephan Lichtsteiner.webp' },
-    { client: 'Umbro x Futsal',               title: 'Brand Partnerships',    image: CARDS + '0014 - Umbro.webp' },
+    { client: 'Stephan Lichtsteiner',         title: 'Digital Content',       image: CARDS + '0013 - Stephan Lichtsteiner.webp' },
+    { client: 'Umbro',                        title: 'Brand Partnerships',    image: CARDS + '0014 - Umbro.webp' },
     { client: 'Falcão',                       title: 'Digital Content',       image: CARDS + '0015 - Falcão.webp' },
-    { client: 'Adidas x Freestyle Football',  title: 'Brand Partnerships',    image: CARDS + '0016 - Adidas.webp' },
+    { client: 'Adidas',                       title: 'Brand Partnerships',    image: CARDS + '0016 - Adidas.webp' },
   ];
 
   const track = document.getElementById('galleryTrack');
@@ -137,9 +137,11 @@
     baseCenter = cardEls.map((card) => card.offsetLeft + card.offsetWidth / 2);
 
     if (!measured) {
-      // start roughly in the middle set so both directions have room before wrap
-      current = setWidth;
-      target = setWidth;
+      // Open centered on Joe Hart, using his copy in the middle set so
+      // there's a full set of scroll buffer on both sides.
+      const startIndex = projects.length + projects.findIndex((p) => p.client === 'Joe Hart');
+      current = PHASE + startIndex * PITCH;
+      target = current;
       measured = true;
     }
   };
@@ -200,7 +202,17 @@
     // at all (pos is already current % setWidth), so recentering here is
     // completely invisible — it just happens before the buffer runs out
     // instead of after.
-    if (current < setWidth * 0.5 || current > setWidth * 1.5) {
+    //
+    // Two refinements over the first version of this fix: (1) it only
+    // fires while nothing is actively being dragged — dragMove() rebuilds
+    // `target` from `dragStartTarget` every move, and that reference
+    // wasn't shifted, so a recenter mid-drag re-introduced the exact jolt
+    // it was meant to prevent; (2) the trigger window is much wider now
+    // (using most of the 3-set buffer instead of just half of it), so it
+    // fires far less often — which was the "trava ao passar do último
+    // para o primeiro" feeling, since with the old tight window it could
+    // trigger roughly twice per full pass through the project list.
+    if (!isDragging && (current < setWidth * 0.4 || current > setWidth * 2.6)) {
       const shift = Math.round((current - setWidth) / setWidth) * setWidth;
       current -= shift;
       target -= shift;
