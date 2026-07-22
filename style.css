@@ -333,15 +333,15 @@ body.about-page {
 /* ---------- Responsive ---------- */
 @media (max-width: 720px) {
   .site-header { padding: 20px; }
-  .site-footer { padding: 18px 20px; flex-direction: column; gap: 8px; align-items: flex-start; }
+  /* Only the contact email stays on mobile — the web-design credit and
+     copyright are dropped, and the email is centered on its own. */
+  .site-footer { padding: 18px 20px; justify-content: center; }
+  .site-footer .footer-item:not(.footer-social) { display: none; }
   .project-card { width: 312px; margin-left: -210px; }
   .project-thumb { height: 208px; }
   .gallery-track { padding: 0 24px; }
   .cursor-follower { display: none; }
-  /* The footer stacks to 3 lines here instead of one row, so it's taller
-     than the desktop bottom:92px this was tuned against — push the hint
-     up so the two don't overlap. */
-  .scroll-hint { bottom: 132px; }
+  .scroll-hint { bottom: 100px; }
 }
 
 @media (pointer: coarse) {
