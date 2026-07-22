@@ -37,12 +37,21 @@ a {
 }
 
 /* The About page is a normal, vertically-scrolling content page — unlike
-   the gallery page, it shouldn't lock scrolling or hide the native cursor. */
-body.about-page {
+   the gallery page, it shouldn't lock scrolling or hide the native cursor.
+   The <html> element is what actually needs to scroll: body was set to
+   overflow-y:auto with height:auto (grows to fit its content), but that
+   just makes body taller than <html>'s fixed 100%-height, hidden-overflow
+   box — <html> then clips that excess instead of letting anything reach
+   it, so the page could never actually scroll to its own bottom. */
+html.about-page {
   height: auto;
-  min-height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+}
+
+html.about-page body {
+  height: auto;
+  min-height: 100%;
   cursor: auto;
 }
 
