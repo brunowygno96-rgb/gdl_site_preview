@@ -25,6 +25,10 @@ html, body {
   font-family: 'Helvetica Neue', Arial, 'Segoe UI', sans-serif;
   -webkit-font-smoothing: antialiased;
   cursor: none;
+  /* Mobile Chrome/Safari flash a gray tap highlight on links/buttons by
+     default — this is a custom-cursor, no-native-chrome site, so it reads
+     as a bug otherwise. */
+  -webkit-tap-highlight-color: transparent;
 }
 
 a {
@@ -161,10 +165,17 @@ body.about-page {
 .gallery-viewport {
   position: relative;
   height: 100vh;
+  height: 100dvh; /* mobile browsers resize the visual viewport as their
+                     address bar shows/hides; 100vh doesn't track that and
+                     leaves a gap (or clips content) — dvh does. Browsers
+                     that don't support dvh just keep the 100vh above. */
   width: 100vw;
   display: flex;
   align-items: center;
   overflow: hidden;
+  touch-action: none; /* the drag/swipe gesture is handled entirely by our
+                          own JS — this stops the browser's native scroll,
+                          pull-to-refresh and pinch-zoom from fighting it */
 }
 
 .gallery-track {
@@ -327,6 +338,10 @@ body.about-page {
   .project-thumb { height: 208px; }
   .gallery-track { padding: 0 24px; }
   .cursor-follower { display: none; }
+  /* The footer stacks to 3 lines here instead of one row, so it's taller
+     than the desktop bottom:92px this was tuned against — push the hint
+     up so the two don't overlap. */
+  .scroll-hint { bottom: 132px; }
 }
 
 @media (pointer: coarse) {
